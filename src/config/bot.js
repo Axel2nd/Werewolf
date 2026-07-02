@@ -540,3 +540,65 @@ export function getRandomColor() {
 }
 
 export default botConfig;
+// =========================
+// WEREWOLF GAME
+// =========================
+werewolf: {
+  enabled: true,
+
+  minPlayers: 5,
+  maxPlayers: 20,
+
+  joinTime: 60000,      // 60 detik
+  nightTime: 45000,     // 45 detik
+  discussionTime: 90000,// 90 detik
+  votingTime: 60000,    // 60 detik
+
+  roles: {
+    werewolf: {
+      min: 1,
+      max: 4
+    },
+    seer: {
+      enabled: true
+    },
+    doctor: {
+      enabled: true
+    },
+    hunter: {
+      enabled: true
+    },
+    villager: {
+      enabled: true
+    }
+  },
+
+  rewards: {
+    winnerCoins: 500,
+    loserCoins: 100
+  }
+},features: {
+    economy: true,
+    leveling: true,
+    moderation: true,
+    logging: true,
+    welcome: true,
+
+    tickets: true,
+    giveaways: true,
+    birthday: true,
+    counter: true,
+
+    verification: true,
+    reactionRoles: true,
+    joinToCreate: true,
+
+    voice: true,
+    search: true,
+    tools: true,
+    utility: true,
+    community: true,
+    fun: true,
+
+    werewolf: true
+},
