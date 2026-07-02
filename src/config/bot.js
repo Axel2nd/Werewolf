@@ -1,22 +1,18 @@
-import { logger } from '../utils/logger.js';
+// Removed unused logger import (bug #4 fix)
 
 export const botConfig = {
   // =========================
   // BOT PRESENCE (what users see under the bot name)
   // =========================
-  // `status` options:
-  // - "online"    = green dot
-  // - "idle"      = yellow moon
-  // - "dnd"       = red do-not-disturb
-  // - "invisible" = appears offline
   presence: {
     status: "online",
 
-    // Activity type number: 0=Playing 1=Streaming 2=Listening 3=Watching 4=Custom 5=Competing
+    // Activity type: 0=Playing 1=Streaming 2=Listening 3=Watching 4=Custom 5=Competing
+    // BUG FIX #3: Changed type from 1 (Streaming, requires url) to 3 (Watching)
     activities: [
       {
         name: "VOID SERVER",
-        type: 1,
+        type: 3,
       },
     ],
   },
@@ -59,23 +55,19 @@ export const botConfig = {
     colors: {
       primary: "#336699",
       secondary: "#2F3136",
-
       success: "#57F287",
       error: "#ED4245",
       warning: "#FEE75C",
       info: "#3498DB",
-
       light: "#FFFFFF",
       dark: "#202225",
       gray: "#99AAB5",
-
       blurple: "#5865F2",
       green: "#57F287",
       yellow: "#FEE75C",
       fuchsia: "#EB459E",
       red: "#ED4245",
       black: "#000000",
-
       giveaway: {
         active: "#57F287",
         ended: "#ED4245",
@@ -89,7 +81,6 @@ export const botConfig = {
       economy: "#F1C40F",
       birthday: "#E91E63",
       moderation: "#9B59B6",
-
       priority: {
         none: "#95A5A6",
         low: "#3498db",
@@ -97,8 +88,6 @@ export const botConfig = {
         high: "#f1c40f",
         urgent: "#e74c3c",
       },
-
-      // Werewolf game color palette
       werewolf: {
         lobby:    "#5865F2",
         night:    "#1A1A2E",
@@ -204,4 +193,26 @@ export const botConfig = {
       criteria: {
         account_age: "Account must be older than specified days",
         server_size: "All users if server has less than 1000 members",
-...
+      },
+    },
+  },
+};
+
+// =========================
+// BUG FIX #2: validateConfig function (was imported by application.js but missing)
+// =========================
+export function validateConfig(config) {
+  const required = ['DISCORD_TOKEN', 'CLIENT_ID'];
+  const missing = required.filter(key => !process.env[key]);
+
+  if (missing.length > 0) {
+    throw new Error(`Missing required environment variables: ${missing.join(', ')}`);
+  }
+
+  return true;
+}
+
+// =========================
+// BUG FIX #1: Default export (application.js imports this as default)
+// =========================
+export default botConfig;
