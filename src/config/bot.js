@@ -1,6 +1,6 @@
 // Removed unused logger import (bug #4 fix)
 
-export const botConfig = {
+export const BotConfig = {
   // =========================
   // BOT PRESENCE (what users see under the bot name)
   // =========================
