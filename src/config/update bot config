@@ -1,0 +1,777 @@
+import { logger } from '../utils/logger.js';
+
+export const botConfig = {
+  // =========================
+  // BOT PRESENCE (what users see under the bot name)
+  // =========================
+  // `status` options:
+  // - "online"    = green dot
+  // - "idle"      = yellow moon
+  // - "dnd"       = red do-not-disturb
+  // - "invisible" = appears offline
+  presence: {
+    status: "online",
+
+    // Activity type number: 0=Playing 1=Streaming 2=Listening 3=Watching 4=Custom 5=Competing
+    activities: [
+      {
+        name: "VOID SERVER",
+        type: 1,
+      },
+    ],
+  },
+
+  // =========================
+  // COMMAND BEHAVIOR
+  // =========================
+  commands: {
+    owners: process.env.OWNER_IDS?.split(",").map(id => id.trim()).filter(Boolean) || [],
+    defaultCooldown: 3,
+    deleteCommands: false,
+    testGuildId: process.env.TEST_GUILD_ID || null,
+    prefix: process.env.PREFIX || "!",
+  },
+
+  // =========================
+  // APPLICATIONS SYSTEM
+  // =========================
+  applications: {
+    defaultQuestions: [
+      { question: "What is your name?", required: true },
+      { question: "How old are you?", required: true },
+      { question: "Why do you want to join?", required: true },
+    ],
+    statusColors: {
+      pending: "#FFA500",
+      approved: "#00FF00",
+      denied: "#FF0000",
+    },
+    applicationCooldown: 24,
+    deleteDeniedAfter: 7,
+    deleteApprovedAfter: 30,
+    managerRoles: [],
+  },
+
+  // =========================
+  // EMBED COLORS & BRANDING
+  // =========================
+  embeds: {
+    colors: {
+      primary: "#336699",
+      secondary: "#2F3136",
+
+      success: "#57F287",
+      error: "#ED4245",
+      warning: "#FEE75C",
+      info: "#3498DB",
+
+      light: "#FFFFFF",
+      dark: "#202225",
+      gray: "#99AAB5",
+
+      blurple: "#5865F2",
+      green: "#57F287",
+      yellow: "#FEE75C",
+      fuchsia: "#EB459E",
+      red: "#ED4245",
+      black: "#000000",
+
+      giveaway: {
+        active: "#57F287",
+        ended: "#ED4245",
+      },
+      ticket: {
+        open: "#57F287",
+        claimed: "#FAA61A",
+        closed: "#ED4245",
+        pending: "#99AAB5",
+      },
+      economy: "#F1C40F",
+      birthday: "#E91E63",
+      moderation: "#9B59B6",
+
+      priority: {
+        none: "#95A5A6",
+        low: "#3498db",
+        medium: "#2ecc71",
+        high: "#f1c40f",
+        urgent: "#e74c3c",
+      },
+
+      // Werewolf game color palette
+      werewolf: {
+        lobby:    "#5865F2",
+        night:    "#1A1A2E",
+        day:      "#F4A261",
+        voting:   "#E76F51",
+        werewolf: "#C0392B",
+        village:  "#27AE60",
+        special:  "#8E44AD",
+        dead:     "#636E72",
+        win:      "#F1C40F",
+      },
+    },
+    footer: {
+      text: "Titan Bot",
+      icon: null,
+    },
+    thumbnail: null,
+    author: {
+      name: null,
+      icon: null,
+      url: null,
+    },
+  },
+
+  // =========================
+  // ECONOMY SETTINGS
+  // =========================
+  economy: {
+    currency: {
+      name: "coins",
+      namePlural: "coins",
+      symbol: "$",
+    },
+    startingBalance: 0,
+    baseBankCapacity: 100000,
+    dailyAmount: 100,
+    workMin: 10,
+    workMax: 100,
+    begMin: 5,
+    begMax: 50,
+    robSuccessRate: 0.4,
+    robFailJailTime: 3600000,
+  },
+
+  // =========================
+  // SHOP SETTINGS
+  // =========================
+  shop: {},
+
+  // =========================
+  // TICKET SYSTEM
+  // =========================
+  tickets: {
+    defaultCategory: null,
+    supportRoles: [],
+    priorities: {
+      none:   { emoji: "⚪", color: "#95A5A6", label: "None" },
+      low:    { emoji: "🟢", color: "#2ECC71", label: "Low" },
+      medium: { emoji: "🟡", color: "#F1C40F", label: "Medium" },
+      high:   { emoji: "🔴", color: "#E74C3C", label: "High" },
+      urgent: { emoji: "🚨", color: "#E91E63", label: "Urgent" },
+    },
+    defaultPriority: "none",
+    archiveCategory: null,
+    logChannel: null,
+  },
+
+  // =========================
+  // GIVEAWAY SETTINGS
+  // =========================
+  giveaways: {
+    defaultDuration: 86400000,
+    minimumWinners: 1,
+    maximumWinners: 10,
+    minimumDuration: 300000,
+    maximumDuration: 2592000000,
+    allowedRoles: [],
+    bypassRoles: [],
+  },
+
+  // =========================
+  // BIRTHDAY SETTINGS
+  // =========================
+  birthday: {
+    defaultRole: null,
+    announcementChannel: null,
+    timezone: "UTC",
+  },
+
+  // =========================
+  // VERIFICATION SETTINGS
+  // =========================
+  verification: {
+    defaultMessage: "Click the button below to verify yourself and gain access to the server!",
+    defaultButtonText: "Verify",
+    autoVerify: {
+      defaultCriteria: "none",
+      defaultAccountAgeDays: 7,
+      serverSizeThreshold: 1000,
+      minAccountAge: 1,
+      maxAccountAge: 365,
+      sendDMNotification: true,
+      criteria: {
+        account_age: "Account must be older than specified days",
+        server_size: "All users if server has less than 1000 members",
+        none: "All users immediately",
+      },
+    },
+    verificationCooldown: 5000,
+    maxVerificationAttempts: 3,
+    attemptWindow: 60000,
+    maxCooldownEntries: 10000,
+    maxAttemptEntries: 10000,
+    cooldownCleanupInterval: 300000,
+    maxAuditMetadataBytes: 4096,
+    maxInMemoryAuditEntries: 1000,
+    logAllVerifications: true,
+    keepAuditTrail: true,
+  },
+
+  // =========================
+  // WELCOME / GOODBYE MESSAGES
+  // =========================
+  welcome: {
+    defaultWelcomeMessage: "Welcome {user} to {server}! We now have {memberCount} members!",
+    defaultGoodbyeMessage: "{user} has left the server. We now have {memberCount} members.",
+    defaultWelcomeChannel: null,
+    defaultGoodbyeChannel: null,
+  },
+
+  // =========================
+  // COUNTER CHANNELS
+  // =========================
+  counters: {
+    defaults: {
+      name: "{name} Counter",
+      description: "Server {name} counter",
+      type: "voice",
+      channelName: "{name}-{count}",
+    },
+    permissions: {
+      deny: ["VIEW_CHANNEL"],
+      allow: ["VIEW_CHANNEL", "CONNECT", "SPEAK"],
+    },
+    messages: {
+      created: "✅ Created counter **{name}**",
+      deleted: "🗑️ Deleted counter **{name}**",
+      updated: "🔄 Updated counter **{name}**",
+    },
+    types: {
+      members: {
+        name: "👥 Members",
+        description: "Total members in the server",
+        getCount: (guild) => guild.memberCount.toString(),
+      },
+      bots: {
+        name: "🤖 Bots",
+        description: "Total bot accounts in the server",
+        getCount: (guild) => guild.members.cache.filter((m) => m.user.bot).size.toString(),
+      },
+      members_only: {
+        name: "👤 Humans",
+        description: "Total human members (non-bots)",
+        getCount: (guild) => guild.members.cache.filter((m) => !m.user.bot).size.toString(),
+      },
+    },
+  },
+
+  // =========================
+  // GENERIC BOT MESSAGES
+  // =========================
+  messages: {
+    noPermission: "You do not have permission to use this command.",
+    cooldownActive: "Please wait {time} before using this command again.",
+    errorOccurred: "An error occurred while executing this command.",
+    missingPermissions: "I am missing required permissions to perform this action.",
+    commandDisabled: "This command has been disabled.",
+    maintenanceMode: "The bot is currently in maintenance mode.",
+  },
+
+  // =========================
+  // WEREWOLF GAME SETTINGS
+  // =========================
+  // A social deduction game played in Discord channels.
+  // Villagers try to find and eliminate all Werewolves.
+  // Werewolves try to outnumber the Villagers.
+  // Requires slash command handlers in src/commands/werewolf/.
+  werewolf: {
+
+    // ── PLAYER LIMITS ──────────────────────────────────────────────────
+    minPlayers: 4,
+    maxPlayers: 20,
+
+    // ── LOBBY SETTINGS ─────────────────────────────────────────────────
+    lobby: {
+      // Time (ms) the lobby stays open waiting for players. Default: 2 minutes.
+      joinWindow: 120000,
+      // Time (ms) before auto-start once minPlayers is reached. Default: 30 seconds.
+      autoStartDelay: 30000,
+      allowForceStart: true,
+      allowLateJoin: false,
+    },
+
+    // ── PHASE TIMERS (all in milliseconds) ────────────────────────────
+    timers: {
+      // Night phase — players submit DM actions. Default: 60 seconds.
+      nightDuration: 60000,
+      // Day discussion phase. Default: 2 minutes.
+      dayDuration: 120000,
+      // Voting phase after discussion. Default: 60 seconds.
+      votingDuration: 60000,
+      // Grace period before voting locks. Default: 10 seconds.
+      votingGrace: 10000,
+      // Warning sent before each phase ends. Default: 15 seconds.
+      phaseWarning: 15000,
+    },
+
+    // ── ROLE DISTRIBUTION ─────────────────────────────────────────────
+    // How many special roles appear per player count.
+    // Remaining players become Villagers automatically.
+    // Keys must be within minPlayers..maxPlayers.
+    // Every entry MUST include at least one "werewolf".
+    // Total special roles must be LESS than the player count.
+    roleDistribution: {
+      4:  { werewolf: 1, seer: 1 },
+      6:  { werewolf: 1, seer: 1, doctor: 1 },
+      8:  { werewolf: 2, seer: 1, doctor: 1 },
+      10: { werewolf: 2, seer: 1, doctor: 1, hunter: 1 },
+      12: { werewolf: 3, seer: 1, doctor: 1, hunter: 1 },
+      15: { werewolf: 3, seer: 1, doctor: 1, hunter: 1, witch: 1 },
+      18: { werewolf: 4, seer: 1, doctor: 1, hunter: 1, witch: 1 },
+      20: { werewolf: 4, seer: 1, doctor: 1, hunter: 1, witch: 1, cupid: 1 },
+    },
+
+    // ── ROLE DEFINITIONS ──────────────────────────────────────────────
+    roles: {
+
+      // VILLAGE TEAM ────────────────────────────────────────────────────
+      villager: {
+        team: "village",
+        emoji: "🧑‍🌾",
+        name: "Villager",
+        description: "An ordinary villager. Use logic and discussion during the day to find and vote out the Werewolves.",
+        nightAction: null,
+        winCondition: "village",
+        revealOnDeath: true,
+      },
+
+      seer: {
+        team: "village",
+        emoji: "🔮",
+        name: "Seer",
+        description: "Each night you may secretly check one player's true role. Use this knowledge wisely.",
+        nightAction: {
+          prompt: "🔮 **Seer** — Choose a player to reveal their role:",
+          targetKey: "seerTarget",
+          revealsResult: true,
+          resultTemplate: "🔮 You learn that **{target}** is a **{role}**.",
+        },
+        winCondition: "village",
+        revealOnDeath: true,
+      },
+
+      doctor: {
+        team: "village",
+        emoji: "💉",
+        name: "Doctor",
+        description: "Each night you may protect one player from a Werewolf kill. You cannot protect the same player two nights in a row.",
+        nightAction: {
+          prompt: "💉 **Doctor** — Choose a player to protect tonight:",
+          targetKey: "doctorTarget",
+          preventRepeatTarget: true,
+          revealsResult: false,
+        },
+        winCondition: "village",
+        revealOnDeath: true,
+      },
+
+      hunter: {
+        team: "village",
+        emoji: "🏹",
+        name: "Hunter",
+        description: "If you are eliminated you may immediately shoot one player, taking them with you.",
+        nightAction: {
+          prompt: "🏹 **Hunter** — You have been eliminated! Choose one player to take with you:",
+          targetKey: "hunterShot",
+          triggeredOnDeath: true,
+          revealsResult: false,
+        },
+        winCondition: "village",
+        revealOnDeath: true,
+      },
+
+      witch: {
+        team: "village",
+        emoji: "🧙‍♀️",
+        name: "Witch",
+        description: "You hold two one-time potions: a Healing Potion and a Poison Potion. Each can only be used once per game.",
+        nightAction: {
+          prompt: "🧙‍♀️ **Witch** — The Werewolves attacked **{victim}**. Use your potions?",
+          targetKey: "witchAction",
+          potions: {
+            heal:   { used: false, emoji: "💚", label: "Heal the victim" },
+            poison: { used: false, emoji: "☠️", label: "Poison another player" },
+          },
+          revealsResult: false,
+        },
+        winCondition: "village",
+        revealOnDeath: true,
+      },
+
+      // WEREWOLF TEAM ───────────────────────────────────────────────────
+      werewolf: {
+        team: "werewolf",
+        emoji: "🐺",
+        name: "Werewolf",
+        description: "Each night you and your pack secretly choose one Villager to eliminate. During the day, blend in and deflect suspicion.",
+        nightAction: {
+          prompt: "🐺 **Werewolf** — Choose a Villager to eliminate tonight:",
+          targetKey: "werewolfTarget",
+          isTeamAction: true,
+          revealsResult: false,
+        },
+        winCondition: "werewolf",
+        revealToTeam: true,
+        revealOnDeath: true,
+      },
+
+      // NEUTRAL ROLES ───────────────────────────────────────────────────
+      cupid: {
+        team: "neutral",
+        emoji: "💘",
+        name: "Cupid",
+        description: "On the first night only, you secretly link two players as Lovers. If one Lover dies, the other dies of heartbreak. Lovers win together.",
+        nightAction: {
+          prompt: "💘 **Cupid** — Choose TWO players to link as Lovers (first Night only):",
+          targetKey: "cupidLovers",
+          multiTarget: true,
+          maxTargets: 2,
+          onlyFirstNight: true,
+          revealsResult: false,
+        },
+        winCondition: "lovers",
+        revealOnDeath: true,
+      },
+    },
+
+    // ── LOVERS MECHANICS (Cupid) ───────────────────────────────────────
+    lovers: {
+      notifyLovers: true,
+      loverNotifyTemplate: "💘 You have been bound by Cupid! Your Lover is **{partner}**. If they die, you will die of heartbreak.",
+      revealRoleOnHeartbreak: true,
+      heartbreakMessage: "💔 **{loversurvivor}** cannot bear the loss of **{lovervictim}** and dies of heartbreak.",
+    },
+
+    // ── VOTING RULES ───────────────────────────────────────────────────
+    voting: {
+      requireMajority: false,
+      // "no_elimination" = nobody eliminated on tie | "random" = random tied player eliminated
+      tieBreaker: "no_elimination",
+      allowVoteChange: true,
+      publicVotes: false,
+      showLiveVoteCount: true,
+      allowSkipVote: true,
+    },
+
+    // ── CHANNEL SETTINGS ───────────────────────────────────────────────
+    channels: {
+      gameCategory: null,
+      createGameChannel: false,
+      createWerewolfChannel: true,
+      werewolfChannelPrefix: "🐺│werewolf-",
+      logChannel: null,
+    },
+
+    // ── DIRECT MESSAGES ────────────────────────────────────────────────
+    dm: {
+      sendRoleOnStart: true,
+      nightActionsViaDM: true,
+      dmFailedMessage: "⚠️ **{user}** has DMs disabled and could not receive their role. Removing them from the game.",
+      kickOnDMFail: true,
+    },
+
+    // ── SPECTATOR SETTINGS ─────────────────────────────────────────────
+    spectators: {
+      enabled: true,
+      seeAllRoles: false,
+      announceRoleOnDeath: true,
+    },
+
+    // ── ECONOMY REWARDS ────────────────────────────────────────────────
+    rewards: {
+      enabled: true,
+      participationReward: 10,
+      winBonus: 50,
+      survivalBonus: 20,
+      correctActionBonus: 15,
+    },
+
+    // ── NARRATOR MESSAGES ──────────────────────────────────────────────
+    // Placeholders: {player} {role} {count} {victims} {target}
+    //               {player1} {player2} {loversurvivor} {lovervictim} {user}
+    narrator: {
+      gameStart:     "🌕 The full moon rises over the quiet village. **{count} players** gather nervously...",
+      nightStart:    "🌑 **Night falls.** The village grows silent. Close your eyes...",
+      dayStart:      "☀️ **Morning arrives.** The village wakes to grim news...",
+      noKillNight:   "🌤️ Miraculously, the village survived the night unharmed.",
+      killNight:     "💀 The villagers discover that **{victims}** was slain in the night.",
+      voteStart:     "🗳️ **Voting has begun!** Discuss and cast your votes. Who is the Werewolf?",
+      voteTie:       "⚖️ The vote is tied. No one is eliminated today.",
+      voteEliminate: "⚖️ The village has spoken. **{player}** has been eliminated! They were a **{role}**.",
+      voteSkip:      "🤝 The village chose to skip today's elimination. Be careful tonight...",
+      werewolfWin:   "🐺 **The Werewolves win!** They have overwhelmed the village.",
+      villageWin:    "🎉 **The Village wins!** All Werewolves have been eliminated.",
+      loversWin:     "💘 **The Lovers win!** They survived together until the very end.",
+      hunterShot:    "🏹 With their last breath, the Hunter shoots **{target}**!",
+      witchHeal:     "💚 The Witch uses the Healing Potion. The victim survives!",
+      witchPoison:   "☠️ The Witch uses the Poison Potion. **{target}** will not see the morning.",
+      seerReveal:    "🔮 The Seer gazes into the night...",
+      loversLinked:  "💘 Two souls have been secretly bound by Cupid's arrow...",
+      heartbreak:    "💔 **{loversurvivor}** cannot go on without **{lovervictim}** and dies of heartbreak.",
+      loversReveal:  "💘 The Lovers — **{player1}** and **{player2}** — survived to the very end!",
+      dmFailed:      "⚠️ **{user}** could not be reached and has been removed from the game.",
+      actionSkipped: "⏩ A special role chose not to act tonight.",
+    },
+
+    // ── DISCORD ROLE IDs (optional, cosmetic) ─────────────────────────
+    discordRoles: {
+      pingRole:      null,
+      hostRole:      null,
+      playerRole:    null,
+      spectatorRole: null,
+    },
+  },
+
+  // =========================
+  // FEATURE TOGGLES
+  // =========================
+  features: {
+    economy: true,
+    leveling: true,
+    moderation: true,
+    logging: true,
+    welcome: true,
+
+    tickets: true,
+    giveaways: true,
+    birthday: true,
+    counter: true,
+
+    verification: true,
+    reactionRoles: true,
+    joinToCreate: true,
+
+    voice: true,
+    search: true,
+    tools: true,
+    utility: true,
+    community: true,
+    fun: true,
+
+    // Social deduction game — requires src/commands/werewolf/ handlers.
+    werewolf: true,
+  },
+};
+
+// =============================================================================
+// CONFIG VALIDATION
+// Safe for Railway + GitHub deploys:
+// - Never crashes on missing optional vars.
+// - Accepts POSTGRES_URL (Railway) OR individual POSTGRES_HOST/USER/PASSWORD.
+// - Validates werewolf config structure fully.
+// - Wraps everything in try/catch so a bad config logs clearly, not silently.
+// =============================================================================
+export function validateConfig(config) {
+  const errors = [];
+  const warnings = [];
+
+  try {
+    // ── Discord token ──
+    if (!process.env.DISCORD_TOKEN && !process.env.TOKEN) {
+      errors.push("DISCORD_TOKEN (or TOKEN) is required — set it in Railway Variables.");
+    }
+
+    if (!process.env.CLIENT_ID) {
+      errors.push("CLIENT_ID is required — set it in Railway Variables.");
+    }
+
+    // ── Database (production only) ──
+    // Railway provides POSTGRES_URL automatically when a Postgres plugin is added.
+    // Accepts POSTGRES_URL alone, or the individual POSTGRES_HOST/USER/PASSWORD vars.
+    if (process.env.NODE_ENV === 'production') {
+      const hasUrl = !!process.env.POSTGRES_URL;
+      const hasIndividual =
+        !!process.env.POSTGRES_HOST &&
+        !!process.env.POSTGRES_USER &&
+        !!process.env.POSTGRES_PASSWORD;
+
+      if (!hasUrl && !hasIndividual) {
+        errors.push(
+          "Database connection missing in production. " +
+          "Set POSTGRES_URL (recommended for Railway) or POSTGRES_HOST + POSTGRES_USER + POSTGRES_PASSWORD."
+        );
+      }
+    }
+
+    // ── Werewolf config (only if feature is enabled) ──
+    if (config?.features?.werewolf) {
+      const ww = config.werewolf;
+
+      if (!ww || typeof ww !== 'object') {
+        errors.push("werewolf config block is missing or invalid.");
+      } else {
+
+        // Player limits
+        if (typeof ww.minPlayers !== 'number' || ww.minPlayers < 4) {
+          errors.push("werewolf.minPlayers must be a number >= 4.");
+        }
+        if (typeof ww.maxPlayers !== 'number' || ww.maxPlayers < (ww.minPlayers ?? 4)) {
+          errors.push("werewolf.maxPlayers must be a number >= werewolf.minPlayers.");
+        }
+
+        // Required sections
+        const requiredSections = ['timers', 'lobby', 'roles', 'roleDistribution', 'voting', 'channels', 'dm', 'narrator', 'rewards', 'lovers'];
+        for (const section of requiredSections) {
+          if (!ww[section] || typeof ww[section] !== 'object') {
+            errors.push(`werewolf.${section} is missing or not an object.`);
+          }
+        }
+
+        // Timer minimums
+        if (ww.timers) {
+          if ((ww.timers.nightDuration ?? 0) < 15000)  errors.push("werewolf.timers.nightDuration must be >= 15000 ms.");
+          if ((ww.timers.dayDuration ?? 0) < 30000)    errors.push("werewolf.timers.dayDuration must be >= 30000 ms.");
+          if ((ww.timers.votingDuration ?? 0) < 15000) errors.push("werewolf.timers.votingDuration must be >= 15000 ms.");
+        }
+
+        // Voting tieBreaker enum
+        const validTieBreakers = ['no_elimination', 'random'];
+        if (ww.voting && !validTieBreakers.includes(ww.voting.tieBreaker)) {
+          errors.push(`werewolf.voting.tieBreaker must be one of: ${validTieBreakers.join(', ')}.`);
+        }
+
+        // roleDistribution cross-checks
+        if (ww.roleDistribution && ww.roles) {
+          const knownRoles = Object.keys(ww.roles);
+          for (const [playerCount, dist] of Object.entries(ww.roleDistribution)) {
+            const count = Number(playerCount);
+
+            if (count < (ww.minPlayers ?? 4) || count > (ww.maxPlayers ?? 20)) {
+              warnings.push(`werewolf.roleDistribution key "${playerCount}" is outside player range — will be ignored.`);
+              continue;
+            }
+
+            let specialTotal = 0;
+            let hasWerewolf = false;
+
+            for (const [roleName, roleCount] of Object.entries(dist)) {
+              if (!knownRoles.includes(roleName)) {
+                errors.push(`werewolf.roleDistribution[${playerCount}] references unknown role "${roleName}".`);
+              }
+              if (!Number.isInteger(roleCount) || roleCount < 1) {
+                errors.push(`werewolf.roleDistribution[${playerCount}].${roleName} must be a positive integer.`);
+              }
+              specialTotal += roleCount || 0;
+              if (roleName === 'werewolf') hasWerewolf = true;
+            }
+
+            if (!hasWerewolf) {
+              errors.push(`werewolf.roleDistribution[${playerCount}] must include at least one "werewolf" role.`);
+            }
+            if (specialTotal >= count) {
+              errors.push(`werewolf.roleDistribution[${playerCount}] has ${specialTotal} special roles but only ${count} players — at least 1 Villager slot required.`);
+            }
+          }
+        }
+
+        // Narrator keys
+        if (ww.narrator) {
+          const requiredNarratorKeys = [
+            'gameStart', 'nightStart', 'dayStart', 'noKillNight', 'killNight',
+            'voteStart', 'voteTie', 'voteEliminate', 'voteSkip',
+            'werewolfWin', 'villageWin', 'loversWin',
+            'hunterShot', 'witchHeal', 'witchPoison', 'seerReveal',
+            'loversLinked', 'heartbreak', 'loversReveal', 'dmFailed', 'actionSkipped',
+          ];
+          for (const key of requiredNarratorKeys) {
+            if (typeof ww.narrator[key] !== 'string' || !ww.narrator[key].trim()) {
+              errors.push(`werewolf.narrator.${key} is missing or empty.`);
+            }
+          }
+        }
+      }
+    }
+
+  } catch (err) {
+    // Never let validation itself crash the bot
+    errors.push(`Config validation threw an unexpected error: ${err?.message ?? err}`);
+  }
+
+  // Log warnings (non-fatal)
+  for (const w of warnings) {
+    logger.warn(`[Config] ${w}`);
+  }
+
+  return errors;
+}
+
+// Run validation at startup
+const configErrors = validateConfig(botConfig);
+if (configErrors.length > 0) {
+  logger.error("Bot configuration errors found:\n" + configErrors.map(e => `  • ${e}`).join("\n"));
+  if (process.env.NODE_ENV === "production") {
+    process.exit(1);
+  }
+} else {
+  logger.info("Bot configuration validated successfully.");
+}
+
+export const BotConfig = botConfig;
+
+// =============================================================================
+// COLOR HELPERS
+// =============================================================================
+/** Parse a hex color string like "#RRGGBB" into an integer, or return the fallback integer. */
+function _hexToInt(hex, fallback) {
+  const parsed = parseInt(hex.replace("#", ""), 16);
+  return Number.isFinite(parsed) ? parsed : fallback;
+}
+
+const _fallbackColorInt = 0x99AAB5;
+
+export function getColor(path, fallback = "#99AAB5") {
+  const fallbackInt = typeof fallback === "number"
+    ? fallback
+    : _hexToInt(fallback, _fallbackColorInt);
+
+  if (typeof path === "number") return path;
+
+  // Direct hex string — validate the parsed result
+  if (typeof path === "string" && path.startsWith("#")) {
+    return _hexToInt(path, fallbackInt);
+  }
+
+  try {
+    const result = path
+      .split(".")
+      .reduce(
+        (obj, key) => (obj && obj[key] !== undefined ? obj[key] : undefined),
+        botConfig.embeds.colors,
+      );
+    if (typeof result === "string" && result.startsWith("#")) {
+      return _hexToInt(result, fallbackInt);
+    }
+    // If the resolved value is already a number, use it; otherwise fall back
+    return (typeof result === "number" && Number.isFinite(result))
+      ? result
+      : fallbackInt;
+  } catch {
+    return fallbackInt;
+  }
+}
+
+export function getRandomColor() {
+  try {
+    const colors = Object.values(botConfig.embeds.colors).flatMap((color) =>
+      typeof color === "string" ? [color] : Object.values(color).filter(v => typeof v === "string"),
+    );
+    if (!colors.length) return "#99AAB5";
+    return colors[Math.floor(Math.random() * colors.length)];
+  } catch {
+    return "#99AAB5";
+  }
+}
+
+export default botConfig;
